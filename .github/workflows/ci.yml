@@ -39,13 +39,13 @@ jobs:
       working-directory: .
     
     - name: Run tests
-      run: |
-        make test
+      run: make test
+      working-directory: .
     
     - name: Run tests with coverage
-      run: |
-        make test-coverage
-    
+      run: make test-coverage
+      working-directory: .
+
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
