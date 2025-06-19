@@ -1,0 +1,57 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# Output of `go build`
+*.out
+
+# Output of `go test` with -coverprofile
+*.coverprofile
+*.cover.out
+
+# Dependency directories (go mod handles this now, but just in case)
+vendor/
+
+# Go workspace file (Go 1.18+)
+go.work
+go.work.sum
+
+# IDE/editor configs
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Coverage files
+coverage.*
+
+# Cache & build artifacts
+*.tmp
+*.bak
+
+# Go build cache
+bin/
+obj/
+
+# If you use Air (live reloader)
+.tmp/
+
+# If you use Delve debugger
+__debug_bin
+
+# Docker-related
+*.tar
+
+build/
+ffmcli
+ffmcli.exe
