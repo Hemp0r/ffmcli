@@ -200,16 +200,44 @@ func (t *Transcoder) processFile(inputPath string) error {
 
 	// Delete source file if requested and transcoding was successful
 	if t.config.DeleteSource && !t.config.DryRun {
-		if err := os.Remove(inputPath); err != nil {
-			fmt.Printf("Warning: failed to delete source file %s: %v\n", inputPath, err)
-		} else if t.config.Verbose {
-			fmt.Printf("Deleted source file: %s\n", inputPath)
+		// Validate inputPath before deletion to prevent path traversal
+		inputDir := ""
+		if t.config.InputDir != "" {
+			inputDir = t.config.InputDir
+		} else {
+			inputDir = "."
+		}
+		if isSafePath(inputDir, inputPath) {
+			if err := os.Remove(inputPath); err != nil {
+				fmt.Printf("Warning: failed to delete source file %s: %v\n", inputPath, err)
+			} else if t.config.Verbose {
+				fmt.Printf("Deleted source file: %s\n", inputPath)
+			}
+		} else {
+			fmt.Printf("Warning: attempted to delete file outside of input directory: %s\n", inputPath)
 		}
 	}
 
 	return nil
 }
 
+// isSafePath checks if the targetPath is within the baseDir (prevents path traversal)
+func isSafePath(baseDir, targetPath string) bool {
+	absBase, err := filepath.Abs(baseDir)
+	if err != nil {
+		return false
+	}
+	absTarget, err := filepath.Abs(targetPath)
+	if err != nil {
+		return false
+	}
+	rel, err := filepath.Rel(absBase, absTarget)
+	if err != nil {
+		return false
+	}
+	// rel will not start with ".." if absTarget is within absBase
+	return !strings.HasPrefix(rel, ".."+string(os.PathSeparator)) && rel != ".."
+}
 // buildFFmpegArgs builds the FFmpeg command arguments
 func (t *Transcoder) buildFFmpegArgs(inputPath, outputPath string, preset Preset, useHardware bool) []string {
 	args := []string{
