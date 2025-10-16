@@ -137,6 +137,7 @@ sudo apt update && sudo apt install ffmpeg
 | `-v, --verbose` | Enable verbose output | `false` |
 | `--dry-run` | Preview what would be processed | `false` |
 | `--overwrite` | Overwrite existing files | `false` |
+| `-d, --delete-source` | Delete source file after successful transcoding | `false` |
 
 ## 📖 Examples
 
