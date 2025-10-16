@@ -12,17 +12,18 @@ import (
 )
 
 var (
-	recursive  bool
-	outputDir  string
-	preset     string
-	inputFile  string
-	overwrite  bool
-	verbose    bool
-	dryRun     bool
-	gpuIndex   int
-	noGPU      bool
-	audioCodec string
-	csvOutput  string
+	recursive    bool
+	outputDir    string
+	preset       string
+	inputFile    string
+	overwrite    bool
+	verbose      bool
+	dryRun       bool
+	gpuIndex     int
+	noGPU        bool
+	audioCodec   string
+	csvOutput    string
+	deleteSource bool
 )
 
 var rootCmd = &cobra.Command{
@@ -41,7 +42,10 @@ Includes recursive directory scanning and provides presets for common encoding s
   ffmcli -i /path/to/videos/ -r -p 1080p_h264 --dry-run
 
   # Force software encoding (disable GPU)
-  ffmcli -i input.mp4 -p 1080p_h264 -o output/ --no-gpu`,
+  ffmcli -i input.mp4 -p 1080p_h264 -o output/ --no-gpu
+
+  # Delete source files after successful transcoding
+  ffmcli -i /path/to/videos/ -r -p 1080p_av1 -o /path/to/output/ --delete-source`,
 	RunE: runTranscode,
 }
 
@@ -57,6 +61,7 @@ func init() {
 	rootCmd.Flags().BoolVar(&noGPU, "no-gpu", false, "Force software encoding (disable GPU acceleration)")
 	rootCmd.Flags().StringVar(&audioCodec, "audio-codec", "copy", "Audio codec: copy (default), aac, ac3, mp3")
 	rootCmd.Flags().StringVar(&csvOutput, "csv-output", "", "CSV file to save conversion analytics (optional)")
+	rootCmd.Flags().BoolVarP(&deleteSource, "delete-source", "d", false, "Delete source file after successful transcoding")
 
 	rootCmd.MarkFlagRequired("input")
 	rootCmd.MarkFlagRequired("output")
@@ -97,16 +102,17 @@ func runTranscode(cmd *cobra.Command, args []string) error {
 
 	// Create transcoder config
 	config := transcoder.Config{
-		InputPath:  inputFile,
-		OutputDir:  outputDir,
-		Preset:     preset,
-		Recursive:  recursive,
-		Overwrite:  overwrite,
-		Verbose:    verbose,
-		DryRun:     dryRun,
-		GPUIndex:   gpuIndex,
-		NoGPU:      noGPU,
-		AudioCodec: audioCodec,
+		InputPath:    inputFile,
+		OutputDir:    outputDir,
+		Preset:       preset,
+		Recursive:    recursive,
+		Overwrite:    overwrite,
+		Verbose:      verbose,
+		DryRun:       dryRun,
+		GPUIndex:     gpuIndex,
+		NoGPU:        noGPU,
+		AudioCodec:   audioCodec,
+		DeleteSource: deleteSource,
 	}
 
 	// Initialize transcoder

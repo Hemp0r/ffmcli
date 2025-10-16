@@ -13,6 +13,7 @@ type Config struct {
 	NoGPU          bool   // Disable GPU acceleration
 	DryRun         bool   // Perform a dry run without actual transcoding
 	SkipValidation bool   // Skip path validation (for system checks)
+	DeleteSource   bool   // Delete source file after successful transcoding
 }
 
 // Validate validates the configuration

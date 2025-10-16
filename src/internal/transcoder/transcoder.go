@@ -198,6 +198,15 @@ func (t *Transcoder) processFile(inputPath string) error {
 			compressionRatio)
 	}
 
+	// Delete source file if requested and transcoding was successful
+	if t.config.DeleteSource && !t.config.DryRun {
+		if err := os.Remove(inputPath); err != nil {
+			fmt.Printf("Warning: failed to delete source file %s: %v\n", inputPath, err)
+		} else if t.config.Verbose {
+			fmt.Printf("Deleted source file: %s\n", inputPath)
+		}
+	}
+
 	return nil
 }
 
