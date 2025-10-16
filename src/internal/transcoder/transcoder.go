@@ -201,10 +201,8 @@ func (t *Transcoder) processFile(inputPath string) error {
 	// Delete source file if requested and transcoding was successful
 	if t.config.DeleteSource && !t.config.DryRun {
 		// Validate inputPath before deletion to prevent path traversal
-		inputDir := ""
-		if t.config.InputDir != "" {
-			inputDir = t.config.InputDir
-		} else {
+		inputDir := filepath.Dir(t.config.InputPath)
+		if inputDir == "" {
 			inputDir = "."
 		}
 		if isSafePath(inputDir, inputPath) {
@@ -238,6 +236,7 @@ func isSafePath(baseDir, targetPath string) bool {
 	// rel will not start with ".." if absTarget is within absBase
 	return !strings.HasPrefix(rel, ".."+string(os.PathSeparator)) && rel != ".."
 }
+
 // buildFFmpegArgs builds the FFmpeg command arguments
 func (t *Transcoder) buildFFmpegArgs(inputPath, outputPath string, preset Preset, useHardware bool) []string {
 	args := []string{
